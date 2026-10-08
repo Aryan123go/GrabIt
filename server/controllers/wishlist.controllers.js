@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import Customer from '../model/customer.model.js'
 import Product from '../model/product.model.js'
+import { cleanDeletedProductReferences } from '../utils/cleanDeletedProductReferences.js'
 
 export const addToWishlist = async (req, res) => {
     try {
@@ -32,14 +33,17 @@ export const addToWishlist = async (req, res) => {
 
 export const getWishlist = async (req, res) => {
     try {
-        const customer = await Customer.findById(req.customer._id).populate({
-            path: 'wishlist',
-            select: 'name price category image stock'
-        })
+        const customer = await Customer.findById(req.customer._id)
 
         if (!customer) {
             return res.status(401).json({ message: 'Customer not found' })
         }
+
+        await cleanDeletedProductReferences(customer)
+        await customer.populate({
+            path: 'wishlist',
+            select: 'name price category image stock'
+        })
 
         const wishlist = customer.wishlist.filter(Boolean)
         return res.status(200).json({ success: true, count: wishlist.length, wishlist })
@@ -56,6 +60,7 @@ export const getWishlistCount = async (req, res) => {
             return res.status(401).json({ message: 'Customer not found' })
         }
 
+        await cleanDeletedProductReferences(customer)
         return res.status(200).json({ success: true, count: customer.wishlist.length })
     } catch (error) {
         return res.status(500).json({ message: 'Unable to fetch wishlist count', error: error.message })

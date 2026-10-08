@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import Customer from '../model/customer.model.js'
 import Product from '../model/product.model.js'
+import { cleanDeletedProductReferences } from '../utils/cleanDeletedProductReferences.js'
 
 const populatedCart = (customerId) => Customer.findById(customerId).populate({
     path: 'cart.product',
@@ -36,6 +37,7 @@ export const addToCart = async (req, res) => {
             return res.status(404).json({ message: 'Customer not found' })
         }
 
+        await cleanDeletedProductReferences(customer)
         const existingItem = customer.cart.find((item) => item.product.toString() === productId)
         const nextQuantity = (existingItem?.quantity || 0) + 1
         if (nextQuantity > product.stock) {
@@ -57,11 +59,13 @@ export const addToCart = async (req, res) => {
 
 export const getCart = async (req, res) => {
     try {
-        const customer = await populatedCart(req.customer._id)
+        const customer = await Customer.findById(req.customer._id)
         if (!customer) {
             return res.status(404).json({ message: 'Customer not found' })
         }
-        return res.status(200).json({ success: true, cart: normalizeCart(customer) })
+
+        await cleanDeletedProductReferences(customer)
+        return res.status(200).json({ success: true, cart: normalizeCart(await populatedCart(customer._id)) })
     } catch (error) {
         return res.status(500).json({ message: 'Unable to fetch cart', error: error.message })
     }
@@ -89,6 +93,7 @@ export const updateCartItemQuantity = async (req, res) => {
             return res.status(404).json({ message: 'Customer not found' })
         }
 
+        await cleanDeletedProductReferences(customer)
         const existingItem = customer.cart.find((item) => item.product.toString() === productId)
         if (!existingItem) {
             return res.status(404).json({ message: 'Product is not in your cart' })
@@ -117,6 +122,7 @@ export const removeFromCart = async (req, res) => {
             return res.status(404).json({ message: 'Customer not found' })
         }
 
+        await cleanDeletedProductReferences(customer)
         customer.cart = customer.cart.filter((item) => item.product.toString() !== productId)
         await customer.save()
         return await sendUpdatedCart(customer._id, res, 'Product removed from cart')

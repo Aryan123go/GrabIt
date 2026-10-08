@@ -4,6 +4,7 @@ import Customer from '../model/customer.model.js'
 import Order from '../model/order.model.js'
 import Product from '../model/product.model.js'
 import createRazorpayClient from '../config/razorpay.js'
+import { cleanDeletedProductReferences } from '../utils/cleanDeletedProductReferences.js'
 
 const normalizeShippingAddress = (shippingAddress) => {
     if (!shippingAddress || typeof shippingAddress !== 'object') {
@@ -148,6 +149,8 @@ export const createPaymentOrder = async (req, res) => {
         if (!customer) {
             return res.status(404).json({ message: 'Customer not found' })
         }
+
+        await cleanDeletedProductReferences(customer)
 
         if (!customer.cart.length) {
             return res.status(400).json({ message: 'Your cart is empty.' })
