@@ -1,250 +1,105 @@
-# GrabIt 🚀
+# GrabIt
 
-GrabIt is a MERN-based shopping portal built with **React, Express, and MongoDB**.
+GrabIt is a full-stack shopping app for discovering products and managing the shopping experience in one place. Customers can browse and search the catalog, save items to a wishlist, manage a stock-validated cart, check out with Razorpay, and view past orders and account details.
 
-The app includes customer authentication, product browsing, wishlist and cart management, Razorpay checkout, and customer order history.
+**Live app:** [grabit-web.onrender.com](https://grabit-web.onrender.com)
 
----
+## Features
 
-## ✨ Features
+- Customer signup and login with protected pages
+- HTTP-only JWT authentication cookies
+- Product catalog with search, filtering, sorting, and product details
+- Shared cart and wishlist
+- Customer profile and shipping details
+- Razorpay checkout with server-side payment-signature verification
+- Order history and order details
+- Responsive interface with GrabIt's warm neutral and olive-green palette
 
-* 🔐 Customer signup & login
-* 🔑 JWT authentication
-* 🍪 HTTP-only authentication cookies
-* 🔒 Protected routes
-* 👤 Customer profile and shipping details
-* 🛍️ Product creation, listing, search, filtering, and sorting
-* ❤️ Customer wishlist and stock-validated shopping cart
-* 💳 Razorpay Test Mode checkout with server-side signature verification
-* 📦 Order history with purchase-time product snapshots
-* 🚪 Logout
-* 🔄 Authentication state management with React Context
-* 🗄️ MongoDB database
-* 🔒 Password hashing with bcrypt
+## Technology
 
----
+- **Frontend:** React 19, Vite, React Router, Axios, Tailwind CSS
+- **Backend:** Node.js, Express 5
+- **Database:** MongoDB with Mongoose
+- **Authentication:** JWT and bcrypt
+- **Payments:** Razorpay
 
-## 🛠️ Tech Stack
+## Run locally
 
-**Frontend**
+### Requirements
 
-* React 19
-* Vite
-* React Router
-* Axios
-* Tailwind CSS
+- Node.js and npm
+- A MongoDB database (local or MongoDB Atlas)
+- Razorpay test credentials to exercise checkout
 
-**Backend**
-
-* Node.js
-* Express 5
-* MongoDB
-* Mongoose
-* JWT
-* bcrypt
-* dotenv
-* cookie-parser
-
----
-
-## 📁 Project Structure
-
-```text
-GrabIt/
-├── client/
-│   ├── public/
-│   │   └── favicon.svg
-│   └── src/
-│       ├── axiosCalls/
-│       │   └── axios.js
-│       ├── components/
-│       │   ├── ProtectedRoute.jsx
-│       │   ├── PublicRoute.jsx
-│       │   ├── ProductCard.jsx
-│       │   ├── StatusMessage.jsx
-│       │   └── WishlistNavLink.jsx
-│       ├── context/
-│       │   └── AuthContext.jsx
-│       ├── Pages/
-│       │   ├── Home.jsx
-│       │   ├── Landing.jsx
-│       │   ├── Login.jsx
-│       │   ├── Products.jsx
-│       │   ├── ProductDetails.jsx
-│       │   ├── Wishlist.jsx
-│       │   ├── CustomerProfile.jsx
-│       │   └── Signup.jsx
-│       ├── App.jsx
-│       ├── index.css
-│       └── main.jsx
-│
-└── server/
-    ├── controllers/
-    │   ├── customer.controllers.js
-    │   ├── product.controllers.js
-    │   └── wishlist.controllers.js
-    ├── middlewares/
-    │   └── authMiddleware.js
-    ├── model/
-    │   ├── customer.model.js
-    │   └── product.model.js
-    ├── routes/
-    │   ├── customer.routes.js
-    │   ├── product.routes.js
-    │   └── wishlist.routes.js
-    ├── utils/
-    │   └── genToken.js
-    └── index.js
-```
-
----
-
-## 🌐 Application Routes
-
-| Route     | Purpose                 |
-| --------- | ----------------------- |
-| `/`       | Landing page            |
-| `/login`  | Login                   |
-| `/signup` | Customer registration   |
-| `/home`   | Protected customer page |
-| `/products` | Protected product catalogue |
-| `/products/:id` | Protected product details |
-| `/wishlist` | Protected saved products |
-| `/cart` | Protected shopping cart |
-| `/checkout` | Protected checkout and payment |
-| `/orders` | Protected customer order history |
-| `/orders/:id` | Protected order details |
-| `/profile` | Protected profile and shipping settings |
-| `*`       | Redirects to `/`        |
-
-Authentication is managed through `AuthContext`, with `ProtectedRoute` and `PublicRoute` handling access to different pages.
-
----
-
-## 🔌 API
-
-The backend runs on port `8084` and exposes customer, product, wishlist, cart, and order APIs. All wishlist, cart, and order endpoints require the HTTP-only authentication cookie.
-
-| Method | Endpoint             | Purpose                    |
-| ------ | -------------------- | -------------------------- |
-| `POST` | `/customer/register` | Create a customer account  |
-| `POST` | `/customer/login`    | Login                      |
-| `GET`  | `/customer/me`       | Get the logged-in customer |
-| `PUT`  | `/customer/profile`  | Update profile and shipping details |
-| `POST` | `/customer/logout`   | Logout                     |
-
-### Product APIs
-
-| Method | Endpoint | Purpose |
-| ------ | -------- | ------- |
-| `POST` | `/products` | Create a product |
-| `GET` | `/products` | List, search, filter, and sort products |
-| `GET` | `/products/:id` | Get one product |
-
-The frontend communicates with the backend using Axios and sends authentication cookies with requests.
-
-## Deploying on Render
-
-This repository includes a `render.yaml` Blueprint for a free Render web service (API) and static site (frontend).
-
-1. Push the project to a GitHub or GitLab repository and connect that repository to Render.
-2. Create a new Blueprint using the repository root. Render will prompt for `dbURL` and Razorpay test key values. Use the MongoDB connection string for `dbURL`; enter credentials only in Render.
-3. The Blueprint currently configures `ALLOWED_ORIGINS` and `VITE_API_URL` for the deployed service URLs. If Render assigns different URLs, update these two values to the exact frontend origin and full API origin, then redeploy both services.
-4. Keep `JWT_SECRET` generated by Render, and use Razorpay test credentials unless live payments have been explicitly configured.
-
-The client defaults to `http://localhost:8084` for local development; set `VITE_API_URL` in the frontend service for production. The API supports the Render-injected `PORT` and restricts credentialed CORS to the configured comma-separated `ALLOWED_ORIGINS`. Authentication cookies use the root path and production-safe cross-origin flags.
-
-Render's free web service can spin down after 15 minutes without traffic, so the first API request after inactivity may take about a minute. Free instance hours are limited and shared by the workspace; check Render's current free-tier limits before deployment.
-
-### Wishlist APIs
-
-| Method | Endpoint | Purpose |
-| ------ | -------- | ------- |
-| `POST` | `/wishlist/:productId` | Add a product to the authenticated customer's wishlist |
-| `GET` | `/wishlist` | Get populated products from the authenticated customer's wishlist |
-| `GET` | `/wishlist/count` | Get the authenticated customer's wishlist count |
-| `DELETE` | `/wishlist/:productId` | Remove a product from the authenticated customer's wishlist |
-
-Wishlist entries are stored as Product ObjectId references on the Customer document. All wishlist endpoints use the existing HTTP-only JWT cookie; clients do not send a customer ID.
-
-### Cart APIs
-
-| Method | Endpoint | Purpose |
-| ------ | -------- | ------- |
-| `POST` | `/cart/:productId` | Add one unit or increment an existing cart item |
-| `GET` | `/cart` | Get the authenticated customer's populated cart |
-| `PATCH` | `/cart/:productId` | Set an item's quantity |
-| `DELETE` | `/cart/:productId` | Remove an item from the cart |
-
-Cart rows store Product references and quantities on the Customer document. Mutations validate product stock and return the updated populated cart. The frontend shares cart state through `CartContext`; item count and subtotal are derived from its current state.
-
-### Order APIs
-
-| Method | Endpoint | Purpose |
-| ------ | -------- | ------- |
-| `POST` | `/orders/create-payment-order` | Validate shipping/cart data and create a Razorpay order |
-| `POST` | `/orders/verify-payment` | Verify payment signature, decrement stock, and place the order |
-| `GET` | `/orders` | List the authenticated customer's orders |
-| `GET` | `/orders/:id` | Get one of the authenticated customer's orders |
-
-Order line items retain product name, image, and price snapshots. Inventory changes and order/cart updates are committed together when payment is verified.
-
-## Local Development
-
-Run the API and frontend in separate terminals from the project root:
+### 1. Configure the API
 
 ```powershell
 cd server
+Copy-Item .env.example .env
 npm install
 npm run dev
 ```
+
+Set the values in `server/.env` before starting the server:
+
+| Variable | Description |
+| --- | --- |
+| `PORT` | API port; defaults to `8084`. |
+| `NODE_ENV` | Use `development` locally. |
+| `JWT_SECRET` | A long, random secret used to sign authentication tokens. |
+| `dbURL` | MongoDB connection string, including the database name. |
+| `ALLOWED_ORIGINS` | Comma-separated frontend origins allowed by credentialed CORS; locally, `http://localhost:5173`. |
+| `RAZORPAY_KEY_ID` | Razorpay test key ID. |
+| `RAZORPAY_KEY_SECRET` | Matching Razorpay test key secret. |
+
+### 2. Configure and run the frontend
+
+Open a second terminal from the project root:
 
 ```powershell
 cd client
+Copy-Item .env.example .env
 npm install
 npm run dev
 ```
 
-Create `server/.env` with `dbURL`, `JWT_SECRET`, `RAZORPAY_KEY_ID`, and `RAZORPAY_KEY_SECRET`. Use Razorpay Test Mode credentials for checkout testing. Keep `.env` private and never commit it. To start the backend without auto-reload, run `npm start` from `server`.
+`client/.env` should set `VITE_API_URL=http://localhost:8084` for local development. Open the Vite URL shown in the terminal (typically `http://localhost:5173`).
 
-Product listing supports `search`, `category`, and `sort` query parameters. Product creation is currently an open API intended for development and admin tooling.
+Never commit `.env` files or expose private keys in frontend variables. Only the public Razorpay key ID may be used by the browser; the key secret must remain on the server.
 
----
+## Production build and tests
 
-## 🔐 Authentication
+Run these commands from their respective directories:
 
-GrabIt uses **JWT-based authentication with HTTP-only cookies**.
+```powershell
+# client/
+npm run build
 
-```text
-Signup / Login
-      ↓
-JWT generated
-      ↓
-HTTP-only cookie
-      ↓
-Authenticated request
-      ↓
-Protected route / API
+# server/
+npm test
 ```
 
-Passwords are hashed using **bcrypt** and are not returned in customer responses.
+The frontend build is emitted to `client/dist`. The server tests use Node's built-in test runner.
 
----
+## Deployment
 
-## 🚧 Future Improvements
+The repository includes a Render Blueprint in [`render.yaml`](render.yaml), which provisions a free Node API and a static frontend. The live services are:
 
-* More customer portal functionality
-* Automated testing
-* Improved validation and error handling
-* Production deployment
-* Additional security improvements
+- **Frontend:** [https://grabit-web.onrender.com](https://grabit-web.onrender.com)
+- **API:** [https://grabit-api-p8qc.onrender.com](https://grabit-api-p8qc.onrender.com)
 
----
+To deploy your own instance, connect the repository to Render and create a Blueprint from the repository root. Enter `dbURL` and Razorpay test credentials directly in Render's dashboard; the Blueprint generates `JWT_SECRET`. Configure `ALLOWED_ORIGINS` to the exact frontend origin and `VITE_API_URL` to the full API URL. If Render assigns different service URLs, update those two variables and redeploy.
 
-## 👨‍💻 Author
+Render's free API service may spin down after inactivity, so a later first request can take 50 seconds or more. Free instance hours are limited and shared by the workspace. Use Razorpay test credentials for test payments; configure live credentials only when ready to accept real payments.
 
-**Prabhat Ranjan Jha**
+## Project layout
 
----
+```text
+client/   React application
+server/   Express API, database models, and tests
+render.yaml   Render Blueprint configuration
+```
 
-**GrabIt — still building. 🚀**
+## Author
+
+**Aryan Jaiswal**
