@@ -15,7 +15,7 @@ services:
       - key: dbURL
         sync: false
       - key: ALLOWED_ORIGINS
-        sync: false
+        value: https://grabit-web.onrender.com
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
@@ -29,7 +29,7 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        sync: false
+        value: https://grabit-api-p8qc.onrender.com
     routes:
       - type: rewrite
         source: /*
