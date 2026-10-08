@@ -171,7 +171,7 @@ cd server
 npm install
 ```
 
-From inside the `server` directory, copy `.env.example` to `.env` (PowerShell: `Copy-Item .env.example .env`; macOS/Linux: `cp .env.example .env`). Replace the example values with your local configuration (see [Environment variables](#environment-variables)). Then start the API:
+Create a `server/.env` file and add the API settings listed in [Environment variables](#environment-variables). Keep this file local; it contains credentials. Then start the API:
 
 ```sh
 npm run dev
@@ -188,7 +188,7 @@ cd client
 npm install
 ```
 
-From inside the `client` directory, copy `.env.example` to `.env` (PowerShell: `Copy-Item .env.example .env`; macOS/Linux: `cp .env.example .env`). For local development, set:
+Create a `client/.env` file for local frontend settings. Set:
 
 ```dotenv
 VITE_API_URL=http://localhost:8084
